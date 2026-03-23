@@ -49,7 +49,7 @@ Complete visual tour of all 8 featured automation workflows in production.
                             - - Daily Appointments Processed: **150-200**
                               - - Error Rate: **3.5%**
                                
-                                - [🔗 View in n8n](https://n8n.automation-cameroun.xyz/workflow/BntnsjW5s5EcGqAY)
+                                - [🔗 View ]()
                                
                                 - ---
 
@@ -77,7 +77,7 @@ Complete visual tour of all 8 featured automation workflows in production.
                                                       - - Engagement Increase: **+35%**
                                                         - - Processing Time: **1.2s per post**
                                                          
-                                                          - [🔗 View in n8n](https://n8n.automation-cameroun.xyz/workflow/)
+                                                          - [🔗 View ]()
                                                          
                                                           - ---
 
@@ -105,7 +105,7 @@ Complete visual tour of all 8 featured automation workflows in production.
                                                                                 - - Qualification Accuracy: **87%**
                                                                                   - - Processing Batch Size: **100+ leads**
                                                                                    
-                                                                                    - [🔗 View in n8n](https://n8n.automation-cameroun.xyz/workflow/)
+                                                                                    - [🔗 View ]()
                                                                                    
                                                                                     - ---
 
@@ -133,7 +133,7 @@ Complete visual tour of all 8 featured automation workflows in production.
                                                                                                           - - Daily Transactions: **20-50**
                                                                                                             - - Error Handling: **99.8% uptime**
                                                                                                              
-                                                                                                              - [🔗 View in n8n](https://n8n.automation-cameroun.xyz/workflow/)
+                                                                                                              - [🔗 View]()
                                                                                                              
                                                                                                               - ---
                                                                                                               
@@ -161,7 +161,7 @@ Complete visual tour of all 8 featured automation workflows in production.
                                                                                                                                     - - Detection Accuracy: **96%**
                                                                                                                                       - - Report Generation: **2-3 minutes**
                                                                                                                                        
-                                                                                                                                        - [🔗 View in n8n](https://n8n.automation-cameroun.xyz/workflow/)
+                                                                                                                                        - [🔗 View ]()
                                                                                                                                        
                                                                                                                                         - ---
                                                                                                                                         
@@ -189,7 +189,7 @@ Complete visual tour of all 8 featured automation workflows in production.
                                                                                                                                                               - - Avg Call Duration: **4-6 minutes**
                                                                                                                                                                 - - Wait Time: **<30 seconds**
                                                                                                                                                                  
-                                                                                                                                                                  - [🔗 View in n8n](https://n8n.automation-cameroun.xyz/workflow/)
+                                                                                                                                                                  - [🔗 View ]()
                                                                                                                                                                  
                                                                                                                                                                   - ---
                                                                                                                                                                   
@@ -217,7 +217,7 @@ Complete visual tour of all 8 featured automation workflows in production.
                                                                                                                                                                             - Analysis Accuracy: **92%**
                                                                                                                                                                             - - Report Generation: **1-2 minutes**
                                                                                                                                                                              
-                                                                                                                                                                              - [🔗 View in n8n](https://n8n.automation-cameroun.xyz/workflow/)
+                                                                                                                                                                              - [🔗 View ]()
                                                                                                                                                                               
                                                                                                                                                                               ---
                                                                                                                                                                               
@@ -245,7 +245,7 @@ Complete visual tour of all 8 featured automation workflows in production.
                                                                                                                                                                               - Response Time: **<2 seconds**
                                                                                                                                                                               - User Satisfaction: **4.3/5.0**
                                                                                                                                                                               
-                                                                                                                                                                              [🔗 View in n8n](https://n8n.automation-cameroun.xyz/workflow/)
+                                                                                                                                                                              [🔗 View ]()
                                                                                                                                                                               
                                                                                                                                                                               ---
                                                                                                                                                                               
