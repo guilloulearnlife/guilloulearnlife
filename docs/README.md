@@ -117,7 +117,7 @@ Welcome to the comprehensive documentation for all n8n workflows. Each file cont
                                                                                                                                                      For questions about specific workflows or implementations:
                                                                                                                                                      - 📧 **Email:** guilloulearnlife@gmail.com
                                                                                                                                                      - - 💼 **LinkedIn:** [Tsomega Guillou Martial](https://linkedin.com/in/yourprofile)
-                                                                                                                                                       - - 🌐 **n8n Instance:** [automation-cameroun.xyz](https://n8n.automation-cameroun.xyz)
+                                                                                                                                            
                                                                                                                                                         
                                                                                                                                                          - ---
                                                                                                                                                          
