@@ -57,7 +57,7 @@ Automation Engineer & Full-Stack Developer with hands-on experience in **workflo
 
       ## 💼 Experience
 
-      - **Werkstudent Demand Management / Architektur** – Framatome GmbH, Erlangen *(07/2024 – present)*
+      - **Werkstudent Demand Management / Architektur** – Framatome GmbH, Erlangen *(07/2025 – present)*
       - - **Praktikant – Brennstoffzellen** – Bosch, Bamberg *(02/2025 – 06/2025)*
        
         - ---
