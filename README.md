@@ -125,6 +125,6 @@ Integration des ServiceNow SAM-Plugins, `alm_license`-Tabellen-Automatisierung.
 
 Ich suche ab **Juli 2026** eine Vollzeitstelle als Junior Automation Engineer, Integration Developer oder Digital Process Engineer — vorzugsweise in Deutschland.
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=flat&logo=linkedin&logoColor=white)](https://linkedin.com/in/guilloulearnlife)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=flat&logo=linkedin&logoColor=white)](https://linkedin.com/in/tsomega-guillou-martial)
 [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat&logo=github&logoColor=white)](https://github.com/guilloulearnlife)
 
