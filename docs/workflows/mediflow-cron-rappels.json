@@ -1,0 +1,197 @@
+{
+  "name": "MediFlow — Rappels Quotidiens WhatsApp (Cron 18h)",
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "nodes": [
+    {
+      "id": "0cd4aaa5-3d09-4df2-b934-0b6d344edaa7",
+      "name": "⏰ Cron 18h00 chaque jour",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [-4288, 3616],
+      "parameters": {
+        "rule": {
+          "interval": [{ "triggerAtHour": 18 }]
+        }
+      }
+    },
+    {
+      "id": "5ee838c7-69b7-4e6e-b70d-2f7f25500aa3",
+      "name": "📆 Calculer Dates Cibles",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-4064, 3616],
+      "parameters": {
+        "jsCode": "// Calcule la date de demain pour filtrer les RDV à rappeler\nconst tomorrow = new Date();\ntomorrow.setDate(tomorrow.getDate() + 1);\nconst dateDemain = tomorrow.toISOString().split('T')[0];\nconst today = new Date().toISOString().split('T')[0];\n\nreturn [{ json: { dateDemain, today, timestamp: new Date().toISOString() } }];"
+      }
+    },
+    {
+      "id": "b13e9dec-e23a-421b-acec-8e1ea712c5e8",
+      "name": "📋 RDV de Demain (Google Sheets)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [-3840, 3616],
+      "parameters": {
+        "documentId": { "__rl": true, "value": "YOUR_GOOGLE_SHEET_ID", "mode": "id" },
+        "sheetName": { "__rl": true, "value": "RENDEZ-VOUS", "mode": "name" },
+        "filtersUI": {
+          "values": [
+            { "lookupColumn": "date_rdv", "lookupValue": "={{ $json.dateDemain }}" },
+            { "lookupColumn": "rappel_j1_envoye", "lookupValue": "" }
+          ]
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Google Sheets — MediFlow"
+        }
+      }
+    },
+    {
+      "id": "f358532d-77e7-49f2-a4ba-b9dcf3c25238",
+      "name": "🔢 Y a-t-il des RDV ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [-3616, 3616],
+      "parameters": {
+        "conditions": {
+          "conditions": [
+            {
+              "leftValue": "={{ $input.all().length }}",
+              "rightValue": 0,
+              "operator": { "type": "number", "operation": "gt" }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "ecf01fe6-4208-4972-97e4-008755e53d8b",
+      "name": "👤 Info Patient & Médecin",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-3408, 3520],
+      "parameters": {
+        "jsCode": "// Normalise les données RDV pour le message Claude\nconst rdvList = $input.all();\n\nreturn rdvList.map(rdv => ({\n  json: {\n    rdv_id: rdv.json.rdv_id,\n    patient_phone: String(rdv.json.patient_telephone || ''),\n    patient_prenom: rdv.json.patient_prenom || 'Patient',\n    medecin_nom: rdv.json.medecin_nom || 'votre médecin',\n    specialite: rdv.json.specialite || '',\n    date_rdv: rdv.json.date_rdv || '',\n    heure_rdv: rdv.json.heure_rdv || '',\n    lieu: rdv.json.lieu || 'Clinique MediFlow'\n  }\n}));"
+      }
+    },
+    {
+      "id": "96ea2a99-e699-48f0-95e1-2b980987983b",
+      "name": "🤖 Claude — Générer Message Rappel",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-3184, 3520],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "anthropicApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"claude-haiku-4-5-20251001\",\n  \"max_tokens\": 300,\n  \"system\": \"Tu rédiges des rappels WhatsApp pour une clinique. Le message doit : commencer par le prénom, rappeler date/heure/médecin, donner un conseil pratique (arriver 10min avant, apporter carnet de santé), se terminer chaleureusement. Max 5 lignes, 2-3 emojis.\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Génère un rappel pour : Prénom : {{ $json.patient_prenom }}, RDV demain : {{ $json.date_rdv }} à {{ $json.heure_rdv }}, Dr. {{ $json.medecin_nom }} ({{ $json.specialite }}), Lieu : {{ $json.lieu }}\"\n    }\n  ]\n}"
+      },
+      "credentials": {
+        "anthropicApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Anthropic — MediFlow"
+        }
+      }
+    },
+    {
+      "id": "82b6c0a0-d2ab-4997-a93a-8abef776e55a",
+      "name": "📲 Envoyer Rappel WhatsApp",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-2960, 3520],
+      "parameters": {
+        "method": "POST",
+        "url": "=https://YOUR_EVOLUTION_API_URL/message/sendText/YOUR_INSTANCE_NAME",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [{ "name": "Content-Type", "value": "application/json" }]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            { "name": "number", "value": "={{ $('👤 Info Patient & Médecin').item.json.patient_phone }}" },
+            { "name": "text", "value": "={{ $json.content[0].text }}\n\n_Pour annuler ou reporter, répondez à ce message._\n_— MediBot, {{ $('👤 Info Patient & Médecin').item.json.lieu }}_" }
+          ]
+        }
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Evolution API — MediFlow"
+        }
+      }
+    },
+    {
+      "id": "02f2f3a2-1744-486b-9320-2424239e24f4",
+      "name": "✅ Marquer Rappel Envoyé",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [-2736, 3520],
+      "parameters": {
+        "operation": "update",
+        "documentId": { "__rl": true, "value": "YOUR_GOOGLE_SHEET_ID", "mode": "id" },
+        "sheetName": { "__rl": true, "value": "RENDEZ-VOUS", "mode": "name" },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "rdv_id": "={{ $('👤 Info Patient & Médecin').item.json.rdv_id }}",
+            "rappel_j1_envoye": "OUI",
+            "rappel_j1_date": "={{ $now.toISO() }}"
+          },
+          "matchingColumns": ["rdv_id"]
+        }
+      }
+    },
+    {
+      "id": "33d25434-d8c1-44e4-8455-4f89c05b9c3a",
+      "name": "📝 Log — Aucun RDV",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [-3408, 3712],
+      "parameters": {}
+    }
+  ],
+  "connections": {
+    "⏰ Cron 18h00 chaque jour": {
+      "main": [[{ "node": "📆 Calculer Dates Cibles", "type": "main", "index": 0 }]]
+    },
+    "📆 Calculer Dates Cibles": {
+      "main": [[{ "node": "📋 RDV de Demain (Google Sheets)", "type": "main", "index": 0 }]]
+    },
+    "📋 RDV de Demain (Google Sheets)": {
+      "main": [[{ "node": "🔢 Y a-t-il des RDV ?", "type": "main", "index": 0 }]]
+    },
+    "🔢 Y a-t-il des RDV ?": {
+      "main": [
+        [{ "node": "👤 Info Patient & Médecin", "type": "main", "index": 0 }],
+        [{ "node": "📝 Log — Aucun RDV", "type": "main", "index": 0 }]
+      ]
+    },
+    "👤 Info Patient & Médecin": {
+      "main": [[{ "node": "🤖 Claude — Générer Message Rappel", "type": "main", "index": 0 }]]
+    },
+    "🤖 Claude — Générer Message Rappel": {
+      "main": [[{ "node": "📲 Envoyer Rappel WhatsApp", "type": "main", "index": 0 }]]
+    },
+    "📲 Envoyer Rappel WhatsApp": {
+      "main": [[{ "node": "✅ Marquer Rappel Envoyé", "type": "main", "index": 0 }]]
+    }
+  },
+  "tags": ["mediflow", "whatsapp", "cron", "reminders", "claude-ai"]
+}
