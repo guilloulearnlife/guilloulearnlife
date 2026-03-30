@@ -68,8 +68,8 @@ Die Automatisierungsschicht besteht aus zwei voneinander getrennten Workflows:
 
 | Datei | Beschreibung | Trigger |
 |---|---|---|
-| [`mediflow-rdv-whatsapp.json`](./workflows/mediflow-rdv-whatsapp.json) | Hauptworkflow — Terminbuchung per WhatsApp | Webhook (Evolution API) |
-| [`mediflow-cron-rappels.json`](./workflows/mediflow-cron-rappels.json) | Cron-Workflow — Tägliche Erinnerungen | Schedule (18:00 täglich) |
+| [`mediflow-rdv-whatsapp.json`](./docs/workflows/mediflow-rdv-whatsapp.json) | Hauptworkflow — Terminbuchung per WhatsApp | Webhook (Evolution API) |
+| [`mediflow-cron-rappels.json`](./docs/workflows/mediflow-cron-rappels.json) | Cron-Workflow — Tägliche Erinnerungen | Schedule (18:00 täglich) |
 
 ### Import in n8n
 
