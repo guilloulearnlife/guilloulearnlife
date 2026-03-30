@@ -1,0 +1,355 @@
+{
+  "name": "MediFlow — Prise de Rendez-vous WhatsApp (Evolution API)",
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "nodes": [
+    {
+      "id": "3cca0317-e1d3-4a91-a119-88e5c259097b",
+      "name": "📥 Webhook Evolution API",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [-4576, 2368],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "mediflow-rdv",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "webhookId": "YOUR_WEBHOOK_ID"
+    },
+    {
+      "id": "f5332879-f396-493f-9089-2fab2098528c",
+      "name": "🔍 Extraire Message & Téléphone",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-4352, 2368],
+      "parameters": {
+        "jsCode": "// Parse le payload Evolution API et extrait le numéro + message\nconst body = $input.first().json.body;\nlet phone = '';\nlet message = '';\nlet messageType = 'text';\n\ntry {\n  if (body.data) {\n    phone = body.data.key?.remoteJid?.replace('@s.whatsapp.net', '') || '';\n    message = body.data.message?.conversation ||\n              body.data.message?.extendedTextMessage?.text || '';\n    messageType = body.data.messageType || 'conversation';\n    const isFromMe = body.data?.key?.fromMe || false;\n    if (isFromMe) return [{ json: { skip: true, reason: 'message_sortant' } }];\n  } else if (body.messages) {\n    phone = body.messages[0]?.key?.remoteJid?.replace('@s.whatsapp.net', '') || '';\n    message = body.messages[0]?.message?.conversation || '';\n    if (body.messages[0]?.key?.fromMe) return [{ json: { skip: true, reason: 'message_sortant' } }];\n  }\n} catch(e) {\n  console.log('Parse error:', e.message);\n}\n\n// Ignorer les messages non-texte (audio, images)\nif (!message || messageType === 'audioMessage' || messageType === 'imageMessage') {\n  return [{ json: { skip: true, reason: 'pas_texte', phone } }];\n}\n\nreturn [{ json: { phone, message, messageType, timestamp: new Date().toISOString() } }];"
+      }
+    },
+    {
+      "id": "f174cd85-9803-40c0-814f-b1040486cfbe",
+      "name": "🚦 Message valide ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [-4128, 2368],
+      "parameters": {
+        "conditions": {
+          "conditions": [
+            {
+              "leftValue": "={{ $json.skip }}",
+              "rightValue": true,
+              "operator": { "type": "boolean", "operation": "notEquals" }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "26eb3dfc-726a-4e1b-a1f2-7e3d273ea682",
+      "name": "👤 Chercher Patient (Google Sheets)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [-3728, 2176],
+      "alwaysOutputData": true,
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "PATIENTS",
+          "mode": "name"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "telephone",
+              "lookupValue": "={{ $('🔍 Extraire Message & Téléphone').item.json.phone }}"
+            }
+          ]
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Google Sheets — MediFlow"
+        }
+      }
+    },
+    {
+      "id": "6358dbec-c150-4149-bb0a-1e140f292976",
+      "name": "🆕 Patient connu ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [-3520, 2176],
+      "parameters": {
+        "conditions": {
+          "conditions": [
+            {
+              "leftValue": "={{ $('👤 Chercher Patient (Google Sheets)').item.json.patient_id }}",
+              "rightValue": "",
+              "operator": { "type": "string", "operation": "notEmpty" }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "d4126e7b-9824-4ae4-a107-f17de62095b2",
+      "name": "➕ Créer Nouveau Patient",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [-3376, 2592],
+      "parameters": {
+        "operation": "append",
+        "documentId": { "__rl": true, "value": "YOUR_GOOGLE_SHEET_ID", "mode": "id" },
+        "sheetName": { "__rl": true, "value": "PATIENTS", "mode": "name" },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telephone": "={{ $('🔍 Extraire Message & Téléphone').item.json.phone }}",
+            "patient_id": "=PAT_{{ $now.toFormat('yyyyMMddHHmmss') }}",
+            "date_inscription": "={{ $now.toISO() }}"
+          }
+        }
+      }
+    },
+    {
+      "id": "6b13162a-897f-4fe1-b7b9-734f8e4b7413",
+      "name": "👋 Envoyer Message Bienvenue",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-3168, 2624],
+      "parameters": {
+        "method": "POST",
+        "url": "=https://YOUR_EVOLUTION_API_URL/message/sendText/YOUR_INSTANCE_NAME",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            { "name": "number", "value": "={{ $('🔍 Extraire Message & Téléphone').item.json.phone }}" },
+            { "name": "text", "value": "Bonjour et bienvenue chez MediFlow ! 👋\n\nJe suis MediBot, votre assistant pour la prise de rendez-vous médicaux.\n\nComment puis-je vous aider aujourd'hui ? Vous pouvez me dire par exemple :\n- \"Je veux prendre un rendez-vous\"\n- \"Je veux annuler mon rendez-vous\"\n- \"J'ai une urgence médicale\"" }
+          ]
+        }
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Evolution API — MediFlow"
+        }
+      }
+    },
+    {
+      "id": "5449abe4-aa9a-48ce-91ed-ef2e811f5401",
+      "name": "📋 Lire État Conversation",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-3296, 2176],
+      "parameters": {
+        "jsCode": "// Récupère l'état de conversation persisté en Google Sheets\nconst patientData = $('👤 Chercher Patient (Google Sheets)').item.json;\nconst messageData = $('🔍 Extraire Message & Téléphone').item.json;\n\nconst etatConv = patientData.etat_conversation || 'LIBRE';\nconst creneauxProposes = patientData.creneaux_proposes || '';\n\nreturn [{\n  json: {\n    phone: messageData.phone,\n    message: messageData.message,\n    patient_id: patientData.patient_id || '',\n    patient_prenom: patientData.prenom || '',\n    etat_conversation: etatConv,\n    creneaux_proposes: creneauxProposes\n  }\n}];"
+      }
+    },
+    {
+      "id": "cf75af23-5df4-4204-b086-ec6c1d4acc28",
+      "name": "⏳ En attente de choix ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [-3072, 2176],
+      "parameters": {
+        "conditions": {
+          "conditions": [
+            {
+              "leftValue": "={{ $json.etat_conversation }}",
+              "rightValue": "ATTENTE_CRENEAU",
+              "operator": { "type": "string", "operation": "equals" }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "64c5a635-42d6-45d6-a51b-5cbd49937397",
+      "name": "Prépare Requête Claude",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-2944, 2912],
+      "parameters": {
+        "jsCode": "// Construit le prompt Claude selon l'état de conversation\nconst etat = $('📋 Lire État Conversation').item.json.etat_conversation || 'LIBRE';\nconst message = $('📋 Lire État Conversation').item.json.message || '';\n\nconst body = {\n  model: \"claude-haiku-4-5-20251001\",\n  max_tokens: 600,\n  system: `Tu es MediBot, l'assistant de prise de rendez-vous d'une clinique privée.\n\nServices : cardiologie, pédiatrie, généraliste, gynécologie, dermatologie.\nÉtat conversation : ${etat}\n\nRÈGLES :\n1. RDV sans spécialité → retourne PRENDRE_RDV, specialite=null, liste les spécialités dans message_reponse\n2. État ATTENTE_SPECIALITE → le message est la spécialité choisie\n3. Spécialité précisée → retourne PRENDRE_RDV avec specialite renseignée\n4. Urgence → retourne URGENCE\n5. Autre → retourne AUTRE avec réponse utile\n\nRetourne UNIQUEMENT un JSON valide :\n{\n  \"intention\": \"PRENDRE_RDV\" | \"ANNULER_RDV\" | \"CONFIRMER_RDV\" | \"URGENCE\" | \"AUTRE\",\n  \"specialite\": null | \"cardiologie\" | \"pédiatrie\" | \"généraliste\" | \"gynécologie\" | \"dermatologie\",\n  \"message_reponse\": \"message chaleureux en français\",\n  \"demander_specialite\": false\n}`,\n  messages: [{ role: \"user\", content: \"Message du patient : \" + message }]\n};\n\nreturn [{ json: { claudeBody: JSON.stringify(body) } }];"
+      }
+    },
+    {
+      "id": "177206be-e2e0-4625-997c-7481e8472dd2",
+      "name": "🤖 Claude — Analyser Intention",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-2704, 2912],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "anthropicApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.parse($json.claudeBody) }}",
+        "options": { "timeout": 30000 }
+      },
+      "credentials": {
+        "anthropicApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Anthropic — MediFlow"
+        }
+      }
+    },
+    {
+      "id": "68b7a017-3d1e-46b1-9b5b-e9e90f99d208",
+      "name": "⚙️ Parser Réponse Claude",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-2496, 2912],
+      "parameters": {
+        "jsCode": "// Parse la réponse JSON de Claude et attache les données patient\nconst response = $input.first().json;\nlet claudeData = {};\n\ntry {\n  const rawText = response.content[0].text;\n  const cleaned = rawText.replace(/```json|```/g, '').trim();\n  claudeData = JSON.parse(cleaned);\n} catch(e) {\n  claudeData = {\n    intention: 'AUTRE',\n    message_reponse: 'Bonjour ! Je suis MediBot, votre assistant. Comment puis-je vous aider ?',\n    demander_specialite: false\n  };\n}\n\nclaudeData.phone = $('📋 Lire État Conversation').item.json.phone;\nclaudeData.patient_id = $('📋 Lire État Conversation').item.json.patient_id;\nclaudeData.patient_prenom = $('📋 Lire État Conversation').item.json.patient_prenom;\n\nreturn [{ json: claudeData }];"
+      }
+    },
+    {
+      "id": "89870dba-36e7-42d1-bfc7-ab861990eae7",
+      "name": "🔀 Router par Intention",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [-2304, 2848],
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "conditions": [{ "leftValue": "={{ $json.intention }}", "rightValue": "URGENCE", "operator": { "type": "string", "operation": "equals" } }]
+              }
+            },
+            {
+              "conditions": {
+                "conditions": [
+                  { "leftValue": "={{ $json.intention }}", "rightValue": "PRENDRE_RDV", "operator": { "type": "string", "operation": "equals" } },
+                  { "leftValue": "={{ $json.specialite }}", "rightValue": "", "operator": { "type": "string", "operation": "notEmpty", "singleValue": true } }
+                ]
+              }
+            },
+            {
+              "conditions": {
+                "conditions": [{ "leftValue": "={{ $json.intention }}", "rightValue": "ANNULER_RDV", "operator": { "type": "string", "operation": "equals" } }]
+              }
+            }
+          ]
+        },
+        "options": { "fallbackOutput": "extra" }
+      }
+    },
+    {
+      "id": "0b7fc34d-a5b3-4769-b30c-a9d98b16dd79",
+      "name": "📅 Créer RDV Confirmé",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [-2016, 1024],
+      "parameters": {
+        "operation": "append",
+        "documentId": { "__rl": true, "value": "YOUR_GOOGLE_SHEET_ID", "mode": "id" },
+        "sheetName": { "__rl": true, "value": "RENDEZ-VOUS", "mode": "name" },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "rdv_id": "=RDV_{{ $now.toFormat('yyyyMMddHHmmss') }}",
+            "patient_id": "={{ $json.patient_id }}",
+            "patient_telephone": "={{ $json.phone }}",
+            "medecin_nom": "={{ $json.creneau_choisi.medecin_nom }}",
+            "specialite": "={{ $json.creneau_choisi.specialite }}",
+            "date_rdv": "={{ $json.creneau_choisi.date }}",
+            "heure_rdv": "={{ $json.creneau_choisi.heure_debut }}",
+            "lieu": "={{ $json.creneau_choisi.lieu || 'Clinique MediFlow' }}",
+            "statut": "CONFIRME",
+            "date_creation": "={{ $now.toISO() }}"
+          }
+        }
+      }
+    },
+    {
+      "id": "51a92ed2-12b3-4bbb-883f-be37ead1c0e2",
+      "name": "✅ Réponse Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [752, 2480],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"status\": \"ok\" }",
+        "options": { "responseCode": 200 }
+      }
+    }
+  ],
+  "connections": {
+    "📥 Webhook Evolution API": {
+      "main": [[{ "node": "🔍 Extraire Message & Téléphone", "type": "main", "index": 0 }]]
+    },
+    "🔍 Extraire Message & Téléphone": {
+      "main": [[{ "node": "🚦 Message valide ?", "type": "main", "index": 0 }]]
+    },
+    "🚦 Message valide ?": {
+      "main": [
+        [{ "node": "👤 Chercher Patient (Google Sheets)", "type": "main", "index": 0 }],
+        [{ "node": "✅ Réponse Webhook", "type": "main", "index": 0 }]
+      ]
+    },
+    "👤 Chercher Patient (Google Sheets)": {
+      "main": [[{ "node": "🆕 Patient connu ?", "type": "main", "index": 0 }]]
+    },
+    "🆕 Patient connu ?": {
+      "main": [
+        [{ "node": "📋 Lire État Conversation", "type": "main", "index": 0 }],
+        [{ "node": "➕ Créer Nouveau Patient", "type": "main", "index": 0 }]
+      ]
+    },
+    "➕ Créer Nouveau Patient": {
+      "main": [[{ "node": "👋 Envoyer Message Bienvenue", "type": "main", "index": 0 }]]
+    },
+    "👋 Envoyer Message Bienvenue": {
+      "main": [[{ "node": "✅ Réponse Webhook", "type": "main", "index": 0 }]]
+    },
+    "📋 Lire État Conversation": {
+      "main": [[{ "node": "⏳ En attente de choix ?", "type": "main", "index": 0 }]]
+    },
+    "⏳ En attente de choix ?": {
+      "main": [
+        [{ "node": "🤖 Claude — Analyser Intention", "type": "main", "index": 0 }],
+        [{ "node": "Prépare Requête Claude", "type": "main", "index": 0 }]
+      ]
+    },
+    "Prépare Requête Claude": {
+      "main": [[{ "node": "🤖 Claude — Analyser Intention", "type": "main", "index": 0 }]]
+    },
+    "🤖 Claude — Analyser Intention": {
+      "main": [[{ "node": "⚙️ Parser Réponse Claude", "type": "main", "index": 0 }]]
+    },
+    "⚙️ Parser Réponse Claude": {
+      "main": [[{ "node": "🔀 Router par Intention", "type": "main", "index": 0 }]]
+    },
+    "📅 Créer RDV Confirmé": {
+      "main": [[{ "node": "✅ Réponse Webhook", "type": "main", "index": 0 }]]
+    }
+  },
+  "tags": ["mediflow", "whatsapp", "healthcare", "claude-ai"]
+}
