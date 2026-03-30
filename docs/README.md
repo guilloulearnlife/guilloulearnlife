@@ -1,126 +1,159 @@
-# 📚 Detailed Workflow Documentation
+# MediFlow 🏥
 
-Welcome to the comprehensive documentation for all n8n workflows. Each file contains detailed technical specifications, architecture diagrams, configuration guides, and troubleshooting steps.
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat&logo=typescript&logoColor=white)
+![Next.js](https://img.shields.io/badge/Next.js-000000?style=flat&logo=nextdotjs&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=flat&logo=supabase&logoColor=white)
+![n8n](https://img.shields.io/badge/n8n-EA4B71?style=flat&logo=n8n&logoColor=white)
+![Claude AI](https://img.shields.io/badge/Claude_AI-D4A843?style=flat&logo=anthropic&logoColor=white)
+![WhatsApp](https://img.shields.io/badge/WhatsApp_API-25D366?style=flat&logo=whatsapp&logoColor=white)
+![Google Sheets](https://img.shields.io/badge/Google_Sheets-34A853?style=flat&logo=googlesheets&logoColor=white)
+![Vercel](https://img.shields.io/badge/Vercel-000000?style=flat&logo=vercel&logoColor=white)
 
-## 📖 Documentation Index
+**KI-gestützte Terminverwaltung per WhatsApp für Gesundheitseinrichtungen.**
 
-### Healthcare & Medical
-- **[MediFlow - Appointment Scheduling System](./MEDIFLOW-APPOINTMENT-SYSTEM.md)**
--   - Complete appointment management with Evolution API
-    -   - Real-time confirmations and reminders
-        -   - Conflict detection and double-booking prevention
-         
-            - ### Marketing & Social Media
-            - - **TGM - AI Social Media Autopilot** *(Coming Soon)*
-              -   - Multi-platform content distribution
-                  -   - AI-powered content optimization
-                      -   - Analytics integration
-                       
-                          - ### Sales & Lead Generation
-                          - - **TGM - Prospection Automatique v6** *(Coming Soon)*
-                            -   - Automated lead identification
-                                -   - Lead scoring algorithm
-                                    -   - CRM integration
-                                     
-                                        - ### E-commerce & Payments
-                                        - - **Gumroad → Zoho Auto Delivery** *(Coming Soon)*
-                                          -   - Instant product delivery
-                                              -   - CRM synchronization
-                                                  -   - Automated customer notifications
-                                                   
-                                                      - ### Communication & Compliance
-                                                      - - **TGM - Audit Automatique WhatsApp** *(Coming Soon)*
-                                                        -   - Communication monitoring
-                                                            -   - Compliance tracking
-                                                                -   - Automated reporting
-                                                                 
-                                                                    - ### AI & Voice
-                                                                    - - **TGM - Twilio Voice Bot** *(Coming Soon)*
-                                                                      -   - Google Gemini AI integration
-                                                                          -   - ElevenLabs text-to-speech
-                                                                              -   - Real-time voice processing
-                                                                               
-                                                                                  - ### Analytics & Reporting
-                                                                                  - - **DiasporaWealth - Analytics Agent** *(Coming Soon)*
-                                                                                    -   - Financial data processing
-                                                                                        -   - Automated reporting
-                                                                                          - Executive dashboards
-                                                                                     
-                                                                                          - ### Customer Service
-                                                                                          - - **TGM Chatbot Website AI** *(Coming Soon)*
-                                                                                            -   - Website chatbot integration
-                                                                                                -   - Lead qualification
-                                                                                                    -   - Support automation
-                                                                                                     
-                                                                                                        - ---
-                                                                                                        
-                                                                                                        ## 🎯 How to Use This Documentation
-                                                                                                        
-                                                                                                        ### For Employers
-                                                                                                        - Review each workflow's **Business Value** section
-                                                                                                        - - Check **Performance Metrics** for production readiness
-                                                                                                          - - Read **Technical Stack** to see technologies used
-                                                                                                            - - Review **Deployment Instructions** for implementation details
-                                                                                                             
-                                                                                                              - ### For Technical Integration
-                                                                                                              - - Follow the **Setup Steps** section
-                                                                                                                - - Review **Configuration Guide** for your environment
-                                                                                                                  - - Check **Troubleshooting** for common issues
-                                                                                                                    - - Reference **Architecture** for system design
-                                                                                                                     
-                                                                                                                      - ### For Learning
-                                                                                                                      - - Start with the **Overview** section
-                                                                                                                        - - Study the **Workflow Architecture** diagrams
-                                                                                                                          - - Review **Key Workflow Steps** for process flow
-                                                                                                                            - - Check **Advanced Features** for sophisticated patterns
-                                                                                                                             
-                                                                                                                              - ---
-                                                                                                                              
-                                                                                                                              ## 🚀 Getting Started
-                                                                                                                              
-                                                                                                                              1. **Select a workflow** from the index above
-                                                                                                                              2. 2. **Read the Overview** to understand the purpose
-                                                                                                                                 3. 3. **Review Technical Stack** for required integrations
-                                                                                                                                    4. 4. **Follow Deployment Instructions** for setup
-                                                                                                                                       5. 5. **Test the workflow** with provided test cases
-                                                                                                                                         
-                                                                                                                                          6. ---
-                                                                                                                                         
-                                                                                                                                          7. ## 💼 Portfolio Usage
-                                                                                                                                         
-                                                                                                                                          8. These documentation files showcase:
-                                                                                                                                          9. - ✅ Production-ready workflow architecture
-                                                                                                                                             - - ✅ Clear business value demonstration
-                                                                                                                                               - - ✅ Comprehensive technical documentation
-                                                                                                                                                 - - ✅ Real-world implementation experience
-                                                                                                                                                   - - ✅ Security and compliance best practices
-                                                                                                                                                    
-                                                                                                                                                     - ---
-                                                                                                                                                     
-                                                                                                                                                     ## 🔄 Workflow Status
-                                                                                                                                                     
-                                                                                                                                                     | Workflow | Status | Complexity | Last Updated |
-                                                                                                                                                     |----------|--------|-----------|--------------|
-                                                                                                                                                     | MediFlow | ✅ Complete | High | March 2026 |
-                                                                                                                                                     | TGM - AI Social Media | 🔄 Coming Soon | Medium | - |
-                                                                                                                                                     | TGM - Prospection | 🔄 Coming Soon | High | - |
-                                                                                                                                                     | Gumroad Auto Delivery | 🔄 Coming Soon | Medium | - |
-                                                                                                                                                     | WhatsApp Audit | 🔄 Coming Soon | Medium | - |
-                                                                                                                                                     | Twilio Voice Bot | 🔄 Coming Soon | High | - |
-                                                                                                                                                     | DiasporaWealth Analytics | 🔄 Coming Soon | High | - |
-                                                                                                                                                     | Website Chatbot | 🔄 Coming Soon | Medium | - |
-                                                                                                                                                     
-                                                                                                                                                     ---
-                                                                                                                                                     
-                                                                                                                                                     ## 📞 Contact
-                                                                                                                                                     
-                                                                                                                                                     For questions about specific workflows or implementations:
-                                                                                                                                                     - 📧 **Email:** guilloulearnlife@gmail.com
-                                                                                                                                                     - - 💼 **LinkedIn:** [Tsomega Guillou Martial](https://linkedin.com/in/yourprofile)
-                                                                                                                                            
-                                                                                                                                                        
-                                                                                                                                                         - ---
-                                                                                                                                                         
-                                                                                                                                                         **Last Updated:** March 2026
-                                                                                                                                                         **Version:** 1.0
-                                                                                                                                                         **Maintained by:** Tsomega Guillou Martial
+Patienten buchen Arzttermine direkt über WhatsApp — keine App, kein Formular. MediBot übernimmt die gesamte Konversation, von der Begrüßung bis zur Terminbestätigung, inklusive automatischer Erinnerungen am Vorabend.
+
+🔗 **Live Demo:** [mediflow-two.vercel.app](https://mediflow-two.vercel.app)
+
+---
+
+## Architektur
+
+```
+Patient (WhatsApp)
+       │
+       ▼
+Evolution API (Webhook)
+       │
+       ▼
+n8n Workflow Engine
+  ├── 🔍 Nachricht parsen & validieren
+  ├── 👤 Patienten-Lookup (Google Sheets)
+  ├── 📋 Gesprächszustand laden
+  │
+  ├── [Neuer Patient] → Registrierung + Begrüßung
+  │
+  └── [Bekannt] → Claude AI analysiert Intention
+        ├── PRENDRE_RDV  → Verfügbare Slots anzeigen → Bestätigung
+        ├── ANNULER_RDV  → Terminsuche → Stornierung
+        ├── URGENCE      → Notfallnachricht + SAMU-Hinweis
+        └── AUTRE        → Allgemeine Antwort
+       │
+       ▼
+Google Sheets (Patienten / Termine / Slots)
+       │
+       ▼ (täglich 18:00 Uhr, Cron)
+Claude AI generiert personalisierte Erinnerung
+       │
+       ▼
+WhatsApp Rappel J-1
+```
+
+---
+
+## Funktionen
+
+- **Automatische Patientenerkennung** — Neuer Patient wird automatisch registriert (ID: `PAT_YYYYMMDDHHMMSS`)
+- **Persistenter Gesprächszustand** — `LIBRE` / `ATTENTE_CRENEAU` / `ATTENTE_SPECIALITE` gespeichert in Google Sheets
+- **KI-Intentionserkennung** via Claude Haiku — erkennt Buchung, Stornierung, Urgenz, Smalltalk
+- **Slot-Management** — verfügbare Termine werden gesperrt sobald gebucht (`DISPONIBLE` → `RESERVE`)
+- **Automatische Erinnerungen** — Cron-Job täglich 18 Uhr, Claude generiert personalisierten Text pro Patient
+- **Next.js Dashboard** — Verwaltungsoberfläche für die Klinik (Vercel-deployed)
+
+---
+
+## n8n Workflows
+
+Die Automatisierungsschicht besteht aus zwei voneinander getrennten Workflows:
+
+| Datei | Beschreibung | Trigger |
+|---|---|---|
+| [`mediflow-rdv-whatsapp.json`](./workflows/mediflow-rdv-whatsapp.json) | Hauptworkflow — Terminbuchung per WhatsApp | Webhook (Evolution API) |
+| [`mediflow-cron-rappels.json`](./workflows/mediflow-cron-rappels.json) | Cron-Workflow — Tägliche Erinnerungen | Schedule (18:00 täglich) |
+
+### Import in n8n
+
+1. In n8n: **Settings → Import Workflow**
+2. JSON-Datei hochladen
+3. Alle `YOUR_*` Platzhalter durch eigene Credentials ersetzen (siehe unten)
+
+---
+
+## Google Sheets Datenstruktur
+
+Das System nutzt drei Sheets in einer Google Spreadsheet:
+
+**PATIENTS**
+```
+patient_id | telephone | prenom | nom_complet | etat_conversation | creneaux_proposes | date_inscription
+```
+
+**CRENEAUX**
+```
+creneau_id | medecin_nom | specialite | date | heure_debut | statut | rdv_id_associe
+```
+
+**RENDEZ-VOUS**
+```
+rdv_id | patient_id | patient_telephone | medecin_nom | specialite | date_rdv | heure_rdv | statut | rappel_j1_envoye | rappel_j1_date
+```
+
+---
+
+## Setup
+
+### Voraussetzungen
+
+- n8n (self-hosted oder Cloud)
+- Evolution API Instanz (WhatsApp)
+- Anthropic API Key
+- Google Sheets API (OAuth2)
+- Node.js 18+
+
+### Konfiguration
+
+Ersetze in den Workflow-JSONs folgende Platzhalter:
+
+```
+YOUR_GOOGLE_SHEET_ID      → ID deiner Google Spreadsheet
+YOUR_EVOLUTION_API_URL    → URL deiner Evolution API Instanz
+YOUR_INSTANCE_NAME        → Name deiner WhatsApp-Instanz
+YOUR_CREDENTIAL_ID        → n8n Credential ID (nach Import vergeben)
+```
+
+### Next.js Dashboard
+
+```bash
+git clone https://github.com/guilloulearnlife/mediflow.git
+cd mediflow
+cp .env.example .env.local
+# .env.local ausfüllen
+npm install
+npm run dev
+```
+
+---
+
+## Technischer Stack
+
+| Komponente | Technologie |
+|---|---|
+| Frontend | Next.js 14 (App Router), TypeScript, Tailwind CSS |
+| Datenbank | Supabase (PostgreSQL) |
+| Automatisierung | n8n (self-hosted) |
+| WhatsApp | Evolution API |
+| KI | Anthropic Claude Haiku |
+| Datenspeicher | Google Sheets |
+| Deployment | Vercel |
+
+---
+
+## Projektkontext
+
+Entwickelt als Praxisprojekt im Rahmen von **TGM Automation** — eine B2B-Automatisierungsagentur für den frankophonen Markt. MediFlow zeigt, wie WhatsApp-basierte KI-Assistenten Klinikprozesse automatisieren können, ohne dass Patienten eine App installieren müssen.
+
+---
+
+## Lizenz
+
+MIT — freie Verwendung mit Quellenangabe.
