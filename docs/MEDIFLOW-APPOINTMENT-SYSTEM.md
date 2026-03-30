@@ -196,7 +196,7 @@ MediFlow is a sophisticated appointment management system that automates the com
                                                                                                                                                                      ### Environment Variables
                                                                                                                                                                      ```
                                                                                                                                                                      EVOLUTION_API_KEY=your_key_here
-                                                                                                                                                                     EVOLUTION_API_URL=https://api.evolution.com
+                                                                                                                                                                     EVOLUTION_API_URL=your_evolution_url
                                                                                                                                                                      GMAIL_EMAIL=your_email@gmail.com
                                                                                                                                                                      GMAIL_PASSWORD=your_app_password
                                                                                                                                                                      POSTGRES_HOST=localhost
